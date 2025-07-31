@@ -60,7 +60,6 @@ const InputField: React.FC<InputFieldProps> = ({
                     aria-invalid={error ? 'true' : 'false'}
                 />
 
-                {/* Icon or Password Toggle */}
                 <div className="absolute right-3 top-3.5">
                     {showPasswordToggle && onTogglePassword ? (
                         <button

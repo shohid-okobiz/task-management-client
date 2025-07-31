@@ -22,7 +22,7 @@ const IllustrationPanel: React.FC<IllustrationPanelProps> = ({
                     background: 'linear-gradient(135deg, #23272f 0%, #1a1f27 100%)'
                 }}
             >
-                {/* Animated Background Elements */}
+
                 <div className="absolute inset-0">
                     {/* Person 1 */}
                     <div className="absolute top-20 left-16 animate-bounce">
