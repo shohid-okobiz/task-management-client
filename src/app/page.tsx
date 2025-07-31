@@ -1,9 +1,11 @@
+import SignUpPage from "@/components/signup/SignUp";
+
 
 
 export default function Home() {
   return (
     <div>
-      landing page
+      <SignUpPage />
     </div>
   );
 }
