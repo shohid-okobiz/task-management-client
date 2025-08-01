@@ -19,7 +19,6 @@ const AuthApis = {
         name: string;
         email: string;
         password: string;
-        role: "guest" | "host";
     }) => {
         return axiosClient.post("/signup", payload);
     },

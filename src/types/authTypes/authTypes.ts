@@ -41,7 +41,6 @@ export interface SignupUserData {
     isStaff: boolean;
     isVerified: boolean;
     accountStatus: "active" | "inactive" | string;
-    role: "guest" | "host" | string;
     createdAt: string;
     updatedAt: string;
     __v: number;

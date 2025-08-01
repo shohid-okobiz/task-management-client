@@ -20,7 +20,7 @@ export const AuthServices = {
         name: string;
         email: string;
         password: string;
-        role: "guest" | "host";
+        
     }): Promise<SignupResponse> => {
         try {
             const response = await signupApi(payload);

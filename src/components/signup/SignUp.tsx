@@ -20,8 +20,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
     return (
         <div className={`min-h-screen bg-gray-50 flex ${className}`}>
             <IllustrationPanel
-                title="Stay Organized, Stay Ahead"
-                subtitle="Manage your tasks efficiently and boost productivity with our smart tools."
+                
             />
 
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
