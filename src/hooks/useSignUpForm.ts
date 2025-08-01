@@ -34,7 +34,7 @@ export const useSignUpForm = ({ onSubmit }: UseSignUpFormProps = {}) => {
 
         if (!formData.name.trim()) {
             newErrors.name = 'Full name is required';
-        } else if (formData.name.trim().length < 2) {
+        } else if (formData.name.trim().length < 4) {
             newErrors.name = 'Full name must be at least 2 characters';
         }
 
