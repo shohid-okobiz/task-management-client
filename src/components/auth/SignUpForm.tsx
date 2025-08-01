@@ -44,14 +44,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
 
             <div className="space-y-6">
                 <InputField
-                    id="fullName"
-                    name="fullName"
+                    id="name"
+                    name="name"
                     type="text"
                     label="Full Name"
                     placeholder="Enter your full name"
-                    value={formData.fullName}
+                    value={formData.name}
                     onChange={handleInputChange}
-                    error={errors.fullName}
+                    error={errors.name}
                     icon={User}
                     required
                 />

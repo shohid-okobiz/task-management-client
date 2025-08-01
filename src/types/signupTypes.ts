@@ -1,12 +1,12 @@
 export interface FormData {
-    fullName?: string;
+    name?: string;
     email?: string;
     password?: string;
-    confirmPassword?: string;
+   
 }
 
 export interface FormErrors {
-    fullName?: string;
+    name?: string;
     email?: string;
     password?: string;
     confirmPassword?: string;

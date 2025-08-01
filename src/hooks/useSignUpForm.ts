@@ -5,7 +5,7 @@ import { useState, useCallback } from 'react';
 
 
 interface SignUpFormData {
-    fullName: string;
+    name: string;
     email: string;
     password: string;
     confirmPassword: string;
@@ -17,7 +17,7 @@ interface UseSignUpFormProps {
 
 export const useSignUpForm = ({ onSubmit }: UseSignUpFormProps = {}) => {
     const [formData, setFormData] = useState<SignUpFormData>({
-        fullName: '',
+        name: '',
         email: '',
         password: '',
         confirmPassword: ''
@@ -32,14 +32,13 @@ export const useSignUpForm = ({ onSubmit }: UseSignUpFormProps = {}) => {
     const validateForm = useCallback((): boolean => {
         const newErrors: FormErrors = {};
 
-        // Full name validation
-        if (!formData.fullName.trim()) {
-            newErrors.fullName = 'Full name is required';
-        } else if (formData.fullName.trim().length < 2) {
-            newErrors.fullName = 'Full name must be at least 2 characters';
+        if (!formData.name.trim()) {
+            newErrors.name = 'Full name is required';
+        } else if (formData.name.trim().length < 2) {
+            newErrors.name = 'Full name must be at least 2 characters';
         }
 
-        // Email validation
+      
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required';
@@ -47,7 +46,7 @@ export const useSignUpForm = ({ onSubmit }: UseSignUpFormProps = {}) => {
             newErrors.email = 'Please enter a valid email address';
         }
 
-        // Password validation
+       
         if (!formData.password) {
             newErrors.password = 'Password is required';
         } else if (formData.password.length < 8) {
@@ -56,14 +55,13 @@ export const useSignUpForm = ({ onSubmit }: UseSignUpFormProps = {}) => {
             newErrors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
         }
 
-        // Confirm password validation
+       
         if (!formData.confirmPassword) {
             newErrors.confirmPassword = 'Please confirm your password';
         } else if (formData.password !== formData.confirmPassword) {
             newErrors.confirmPassword = 'Passwords do not match';
         }
 
-        // Terms validation
         if (!agreeTerms) {
             newErrors.terms = 'You must agree to the terms and conditions';
         }
@@ -79,7 +77,7 @@ export const useSignUpForm = ({ onSubmit }: UseSignUpFormProps = {}) => {
             [name]: value
         }));
 
-        // Clear error when user starts typing
+      
         if (errors[name as keyof FormErrors]) {
             setErrors(prev => ({
                 ...prev,
@@ -112,7 +110,7 @@ export const useSignUpForm = ({ onSubmit }: UseSignUpFormProps = {}) => {
 
 
             setFormData({
-                fullName: '',
+                name: '',
                 email: '',
                 password: '',
                 confirmPassword: ''
