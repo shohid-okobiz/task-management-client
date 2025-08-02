@@ -7,6 +7,7 @@ import CheckboxField from '@/components/ui/CheckboxField';
 import Button from '@/components/ui/Button';
 import { useSignUpForm } from '@/hooks/useSignUpForm';
 import { FormData } from '@/types/signupTypes';
+import Link from 'next/link';
 
 
 interface SignUpFormProps {
@@ -135,7 +136,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
                     Create Account
                 </Button>
 
-                
+
                 <div className="relative">
                     <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-gray-300" />
@@ -145,16 +146,16 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
                     </div>
                 </div>
 
-                {/* Login Link */}
+
                 <div className="text-center">
                     <p className="text-gray-600">
                         Already have an account?{' '}
-                        <a
+                        <Link
                             href="/login"
                             className="text-green-500 hover:text-green-600 font-medium focus:outline-none focus:underline"
                         >
                             Log In
-                        </a>
+                        </Link>
                     </p>
                 </div>
             </div>

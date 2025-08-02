@@ -19,8 +19,12 @@ const EmailVerification: React.FC = () => {
     const { mutate, isPending } = useMutation({
         mutationFn: AuthServices.processVerifyEmailOtp,
         onSuccess: async (data) => {
-            messageApi.success(data?.message || "Verification successful!");
-            await router.push("/user-dashboard");
+            messageApi.success("Verification successful!");
+            // Set accessToken in cookies
+            if (typeof window !== 'undefined' && data?.accessToken) {
+                document.cookie = `accessToken=${data.accessToken}; path=/; secure; samesite=strict`;
+            }
+            await router.push("/user-dashboard")
         },
         onError: () => {
             messageApi.error("Verification failed or OTP incorrect");

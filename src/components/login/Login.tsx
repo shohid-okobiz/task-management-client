@@ -19,6 +19,10 @@ const Login: React.FC = () => {
     mutationFn: AuthApis.loginApi,
     onSuccess: async (data: any) => {
       messageApi.success("Login successfully done!");
+      // Set accessToken in cookies
+      if (typeof window !== 'undefined' && data?.data?.accessToken) {
+        document.cookie = `accessToken=${data.data.accessToken}; path=/; secure; samesite=strict`;
+      }
       await router.push("/user-dashboard");
     },
     onError: () => {
