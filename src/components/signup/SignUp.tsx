@@ -6,6 +6,7 @@ import { AuthServices } from '@/services/auth/auth.service';
 import IllustrationPanel from '@/components/ui/IllustrationPanel';
 import SignUpForm from '@/components/auth/SignUpForm';
 import { FormData } from '@/types/signupTypes';
+import { useRouter } from 'next/navigation';
 
 
 interface SignUpPageProps {
@@ -22,6 +23,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
     loading = false,
     className = ""
 }) => {
+    const router = useRouter()
 
     const mutation = useMutation({
         mutationFn: async (data: FormData) => {
@@ -41,7 +43,16 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
                 <SignUpForm
                     onSubmit={async (data) => {
                         try {
-                            await mutation.mutateAsync(data);
+                            const res = await mutation.mutateAsync(data);
+                            console.log("res ==== ", res)
+                            if (res?.status === "success") {
+                                const email = res?.data?.email;
+                                if (email) {
+                                    console.log("email === ", email)
+                                    router.push(`/email-verification?email=${encodeURIComponent(email)}`);
+
+                                }
+                            }
                             if (onSubmit) await onSubmit(data);
                         } catch (error) {
                             console.error("Sign up failed:", error);
