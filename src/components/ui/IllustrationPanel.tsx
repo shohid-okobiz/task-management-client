@@ -35,11 +35,6 @@ const IllustrationPanel: React.FC<IllustrationPanelProps> = ({
             className="max-w-[80%] max-h-[60%] object-contain opacity-30"
           />
         </div>
-
-
-        {/* <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
-          <Lottie animationData={joinAnimation} loop autoplay />
-        </div> */}
       </div>
     </div>
   );
