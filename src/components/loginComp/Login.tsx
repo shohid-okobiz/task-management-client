@@ -13,18 +13,29 @@ import Link from "next/link";
 const Login: React.FC = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   const { mutate, isPending } = useMutation({
     mutationFn: AuthApis.loginApi,
     onSuccess: async (data: any) => {
+    
+      const userData = data?.data || data;
+     
       messageApi.success("Login successfully done!");
-      if (typeof window !== 'undefined' && data?.accessToken) {
-        document.cookie = `accessToken=${data.accessToken}; path=/; secure; samesite=strict`;
-        document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=strict`;
-        document.cookie = `isVerified=${data.isVerified}; path=/; secure; samesite=strict`;
+      if (
+        typeof window !== 'undefined' &&
+        userData?.accessToken &&
+        userData?.refreshToken &&
+        userData?.isVerified
+      ) {
+        document.cookie = `accessToken=${userData.accessToken}; path=/; secure; samesite=strict`;
+        document.cookie = `refreshToken=${userData.refreshToken}; path=/; secure; samesite=strict`;
+        document.cookie = `isVerified=${userData.isVerified}; path=/; secure; samesite=strict`;
+        await router.push("/user-dashboard");
+      } else {
+        messageApi.error("Login response missing tokens or verification status.");
       }
-      await router.push("/user-dashboard");
     },
     onError: () => {
       messageApi.error("Invalid email or password");
@@ -73,6 +84,9 @@ const Login: React.FC = () => {
             value={formData.password}
             onChange={handleInputChange}
             required
+            showPasswordToggle
+            showPassword={showPassword}
+            onTogglePassword={() => setShowPassword((prev) => !prev)}
           />
           <Button
             type="submit"

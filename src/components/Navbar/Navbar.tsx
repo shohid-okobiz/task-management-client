@@ -1,23 +1,61 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { AuthServices } from "@/services/auth/auth.service";
+import {jwtDecode }from "jwt-decode";
 import Link from "next/link";
 import { FaTasks, FaSpinner } from "react-icons/fa";
 import { HiOutlineChevronDown } from "react-icons/hi";
 
 
-interface NavbarProps {
-    userName: string | null;
-    // avatarUrl?: string;
-    // onLogout: () => void;
+
+interface DecodedToken {
+    name?: string;
+    email?: string;
+    [key: string]: any;
 }
 
-const Navbar = ({
-    userName,
-    //   avatarUrl,
-    //    onLogout
-}: NavbarProps) => {
+interface NavbarProps {
+    userName?: string | null;
+}
+
+const Navbar = ({ userName: userNameProp }: NavbarProps) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [userName, setUserName] = useState<string | null>(userNameProp || null);
+    const router = useRouter();
+
+    
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const token = localStorage.getItem("accessToken") || (typeof document !== 'undefined' ? (document.cookie.match(/accessToken=([^;]+)/)?.[1] || null) : null);
+            if (token) {
+                try {
+                    const decoded: DecodedToken = jwtDecode(token);
+                    setUserName(decoded.name || decoded.email || "User");
+                } catch {
+                    setUserName("User");
+                }
+            } else {
+                setUserName(null);
+            }
+        }
+    }, []);
+
+    // Logout handler
+    const handleLogout = async () => {
+        try {
+            await AuthServices.processLogout();
+        } catch {}
+        if (typeof window !== "undefined") {
+            document.cookie = "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            document.cookie = "refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            document.cookie = "isVerified=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            localStorage.removeItem("accessToken");
+        }
+        setUserName(null);
+        router.push("/login");
+    };
 
     return (
         <nav className="relative bg-gradient-to-r from-[#1b5742] to-[#0c0f17] text-white py-3 px-6 flex justify-between items-center">
@@ -56,9 +94,9 @@ const Navbar = ({
 
                 {dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-md z-50">
-                        {!userName ? (
+                        {userName ? (
                             <button
-                                // onClick={onLogout}
+                                onClick={handleLogout}
                                 className="w-full text-left px-4 py-2 hover:bg-gray-100"
                             >
                                 Logout

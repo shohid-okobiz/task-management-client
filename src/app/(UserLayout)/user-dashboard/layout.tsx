@@ -9,10 +9,7 @@ export default function layout({
     return (
         <div className="">
             <Navbar
-                userName="tomas"
-            //   avatarUrl="http://www.emni.com"
-            // onLogout={() => { }}
-            />
+                userName="thomas"/>
             {children}
 
         </div>

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import InputField from "@/components/ui/InputField";
@@ -11,10 +11,13 @@ import OtpInput from "../Otpinput";
 
 const EmailVerification: React.FC = () => {
     const router = useRouter();
+
     const [otp, setOtp] = useState("");
     const [messageApi, contextHolder] = message.useMessage();
     const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
     const email = searchParams?.get("email") || "";
+    const [cooldown, setCooldown] = useState(0);
+    const resendTimer = useRef<NodeJS.Timeout | null>(null);
 
     const { mutate, isPending } = useMutation({
         mutationFn: AuthServices.processVerifyEmailOtp,
@@ -31,6 +34,34 @@ const EmailVerification: React.FC = () => {
             messageApi.error("Verification failed or OTP incorrect");
         },
     });
+
+    const { mutate: resendOtp, isPending: isResending } = useMutation({
+        mutationFn: () => AuthServices.processResendOtp({ email }),
+        onSuccess: (res) => {
+            messageApi.success(res.message || "OTP resent to your email!");
+            startCooldown(30);
+        },
+        onError: (error) => {
+            messageApi.error(error?.message || "Failed to resend OTP.");
+        },
+    });
+
+    const startCooldown = (seconds: number) => {
+        setCooldown(seconds);
+    };
+
+    useEffect(() => {
+        if (cooldown > 0) {
+            resendTimer.current = setInterval(() => {
+                setCooldown((prev) => prev - 1);
+            }, 1000);
+            return () => {
+                if (resendTimer.current) clearInterval(resendTimer.current);
+            };
+        } else if (resendTimer.current) {
+            clearInterval(resendTimer.current);
+        }
+    }, [cooldown]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,6 +84,19 @@ const EmailVerification: React.FC = () => {
                     <Button type="submit" className="w-full" disabled={otp.length !== 6 || isPending}>
                         {isPending ? "Verifying..." : "Verify"}
                     </Button>
+                    <div className="text-center mt-4">
+                        <span className="text-sm text-gray-600">Didn&apos;t get the code?</span>
+                        <br />
+                       <div className="flex flex-end ">
+                         <Button
+                            type="button"
+                            disabled={cooldown > 0 || isResending}
+                            onClick={() => resendOtp()}
+                        >
+                            {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
+                        </Button>
+                       </div>
+                    </div>
                 </form>
 
             </div>

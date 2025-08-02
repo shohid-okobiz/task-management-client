@@ -39,7 +39,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
         <div className={`min-h-screen bg-gray-50 flex overflow-hidden ${className}`}>
 
             <IllustrationPanel />
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-3">
                 <SignUpForm
                     onSubmit={async (data) => {
                         try {

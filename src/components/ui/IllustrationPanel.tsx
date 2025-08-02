@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
-import Lottie from 'lottie-react';
-import joinAnimation from '@/animation/signuplottie.json';
+
 import signupbgImg from '../../assets/Rectangle-bg.png';
 import illustrationImg from "../../assets/Group.svg"
 

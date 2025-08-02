@@ -1,5 +1,6 @@
 import EmailVerification from "@/components/emailVerification/EmailVerification";
 
-export default function EmailVerificationPage() {
+const EmailVerificationPage = () => {
     return <EmailVerification />;
 }
+export default EmailVerificationPage;
