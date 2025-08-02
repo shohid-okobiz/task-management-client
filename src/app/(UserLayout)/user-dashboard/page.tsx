@@ -2,8 +2,8 @@ import NavIllustrationBg from "@/components/ui/NavIllustrationBg";
 
 const UserDashboard = () => {
     return (
-        <div>
-            <NavIllustrationBg />
+        <div className="w-full">
+            {/* <NavIllustrationBg /> */}
         </div>
     )
 }
