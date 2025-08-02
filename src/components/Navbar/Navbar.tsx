@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { FaTasks, FaSpinner } from "react-icons/fa";
 import { HiOutlineChevronDown } from "react-icons/hi";
-import illustrationImg from "../../assets/Group.svg"
+
 
 interface NavbarProps {
     userName: string | null;
@@ -56,7 +56,7 @@ const Navbar = ({
 
                 {dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-md z-50">
-                        {userName ? (
+                        {!userName ? (
                             <button
                                 // onClick={onLogout}
                                 className="w-full text-left px-4 py-2 hover:bg-gray-100"
@@ -68,7 +68,7 @@ const Navbar = ({
                                 <Link href="/login" className="block px-4 py-2 hover:bg-gray-100">
                                     Login
                                 </Link>
-                                <Link href="/signup" className="block px-4 py-2 hover:bg-gray-100">
+                                <Link href="/" className="block px-4 py-2 hover:bg-gray-100">
                                     Sign Up
                                 </Link>
                             </>
@@ -77,14 +77,7 @@ const Navbar = ({
                 )}
             </div>
 
-            {/* Right-side illustration background (small and subtle) */}
-            <div className="absolute right-10 top-7 h-40 w-20 opacity-20 pointer-events-none">
-                <img
-                    src={illustrationImg.src}
-                    alt="Illustration"
-                    className="w-full h-full object-contain"
-                />
-            </div>
+
         </nav>
     );
 };

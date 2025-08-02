@@ -1,8 +1,9 @@
+import NavIllustrationBg from "@/components/ui/NavIllustrationBg";
 
 const UserDashboard = () => {
     return (
         <div>
-            userr dashboard
+            <NavIllustrationBg />
         </div>
     )
 }
