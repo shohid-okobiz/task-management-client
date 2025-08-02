@@ -6,7 +6,7 @@ import { CreateCategoryPayload, CreateTaskPayload, GetTaskListParams, ICategoryG
 
 const {
     CreateTaskApi,
-    GetTaskListApi,createCategoryApi
+    GetTaskListApi,createCategoryApi,getCategoryApi
 
 } = TaskApis;
 
@@ -46,6 +46,20 @@ export const TaskServices = {
                 throw error;
             } else {
                 throw new Error("Unknown error occurred in create task");
+            }
+        }
+    },
+    processGetategoryHandler: async (
+        
+    ): Promise<ICategoryGetResponse> => {
+        try {
+            const response = await getCategoryApi();
+            return response?.data as ICategoryGetResponse;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw error;
+            } else {
+                throw new Error("Unknown error occurred in fetching tasks");
             }
         }
     },
