@@ -45,11 +45,13 @@ export interface SignupUserData {
     updatedAt: string;
     __v: number;
 }
-export interface OtpResponse {
+export type OtpResponse = {
     status: string;
     message: string;
     accessToken: string;
-}
+    refreshToken: string;
+    isVerified: boolean;
+};
 export interface OtpPayload {
     email: string;
     otp: string;

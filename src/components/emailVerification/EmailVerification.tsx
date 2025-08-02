@@ -20,9 +20,10 @@ const EmailVerification: React.FC = () => {
         mutationFn: AuthServices.processVerifyEmailOtp,
         onSuccess: async (data) => {
             messageApi.success("Verification successful!");
-            // Set accessToken in cookies
             if (typeof window !== 'undefined' && data?.accessToken) {
                 document.cookie = `accessToken=${data.accessToken}; path=/; secure; samesite=strict`;
+                document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=strict`;
+                document.cookie = `isVerified=${data.isVerified}; path=/; secure; samesite=strict`;
             }
             await router.push("/user-dashboard")
         },
