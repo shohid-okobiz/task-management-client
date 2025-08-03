@@ -23,10 +23,12 @@ const EmailVerification: React.FC = () => {
         mutationFn: AuthServices.processVerifyEmailOtp,
         onSuccess: async (data) => {
             messageApi.success("Verification successful!");
-            if (typeof window !== 'undefined' && data?.accessToken) {
+            if (typeof window !== 'undefined' && data?.accessToken && data?.refreshToken && data?.isVerified) {
                 document.cookie = `accessToken=${data.accessToken}; path=/; secure; samesite=strict`;
                 document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=strict`;
                 document.cookie = `isVerified=${data.isVerified}; path=/; secure; samesite=strict`;
+                localStorage.setItem("accessToken", data.accessToken);
+                localStorage.setItem("refreshToken", data.refreshToken);
             }
             await router.push("/user-dashboard")
         },
@@ -87,15 +89,15 @@ const EmailVerification: React.FC = () => {
                     <div className="text-center mt-4">
                         <span className="text-sm text-gray-600">Didn&apos;t get the code?</span>
                         <br />
-                       <div className="flex flex-end ">
-                         <Button
-                            type="button"
-                            disabled={cooldown > 0 || isResending}
-                            onClick={() => resendOtp()}
-                        >
-                            {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
-                        </Button>
-                       </div>
+                        <div className="flex flex-end ">
+                            <Button
+                                type="button"
+                                disabled={cooldown > 0 || isResending}
+                                onClick={() => resendOtp()}
+                            >
+                                {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
+                            </Button>
+                        </div>
                     </div>
                 </form>
 

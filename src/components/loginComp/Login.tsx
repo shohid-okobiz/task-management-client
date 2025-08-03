@@ -32,6 +32,10 @@ const Login: React.FC = () => {
         document.cookie = `accessToken=${userData.accessToken}; path=/; secure; samesite=strict`;
         document.cookie = `refreshToken=${userData.refreshToken}; path=/; secure; samesite=strict`;
         document.cookie = `isVerified=${userData.isVerified}; path=/; secure; samesite=strict`;
+
+        localStorage.setItem("accessToken", userData.accessToken);
+        localStorage.setItem("refreshToken", userData.refreshToken);
+
         await router.push("/user-dashboard");
       } else {
         messageApi.error("Login response missing tokens or verification status.");

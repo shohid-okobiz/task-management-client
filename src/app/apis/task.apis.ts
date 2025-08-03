@@ -8,7 +8,7 @@ const TaskApis = {
     CreateTaskApi: (payload: CreateTaskPayload) => {
     return axiosClient.post("/create-new-task", payload);
   },
-   GetTaskListApi: (params: GetTaskListParams) => {
+   GetTaskListApi: (params: GetTaskListParams) => { 
     return axiosClient.get("/get-all-task", { params });
   },
 createCategoryApi: (payload: CreateCategoryPayload) => {

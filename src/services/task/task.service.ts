@@ -14,6 +14,7 @@ export const TaskServices = {
     processCreateTaskHandler: async (payload: CreateTaskPayload): Promise<ICreateTaskResPonse> => {
         try {
             const response = await CreateTaskApi(payload);
+            console.log("response==", response)
             return response?.data as ICreateTaskResPonse;
         } catch (error) {
             if (error instanceof Error) {
@@ -54,6 +55,7 @@ export const TaskServices = {
     ): Promise<ICategoryGetResponse> => {
         try {
             const response = await getCategoryApi();
+            console.log("category response === ", response)
             return response?.data as ICategoryGetResponse;
         } catch (error) {
             if (error instanceof Error) {
