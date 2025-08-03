@@ -20,7 +20,7 @@ const CreateTaskPage: React.FC = () => {
     mutationFn: TaskServices.processCreateTaskHandler,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
-      router.push("/user-dashboard/task-list");
+      router.push("/user-dashboard");
     },
     onError: (err: any) => {
       setError(err?.message || "Failed to create task");
@@ -42,7 +42,7 @@ const CreateTaskPage: React.FC = () => {
     mutate(form);
   };
 
-  
+
   const categories = queryClient.getQueryData<any>(["categories"])?.data || [];
 
   return (

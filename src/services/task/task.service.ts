@@ -6,7 +6,7 @@ import { CreateCategoryPayload, CreateTaskPayload, GetTaskListParams, ICategoryG
 
 const {
     CreateTaskApi,
-    GetTaskListApi,createCategoryApi,getCategoryApi
+    GetTaskListApi, createCategoryApi, getCategoryApi
 
 } = TaskApis;
 
@@ -37,7 +37,7 @@ export const TaskServices = {
             }
         }
     },
-     processCreateCetegoryHandler: async (payload: CreateCategoryPayload): Promise<ICategoryGetResponse> => {
+    processCreateCetegoryHandler: async (payload: CreateCategoryPayload): Promise<ICategoryGetResponse> => {
         try {
             const response = await createCategoryApi(payload);
             return response?.data as ICategoryGetResponse;
@@ -50,7 +50,7 @@ export const TaskServices = {
         }
     },
     processGetategoryHandler: async (
-        
+
     ): Promise<ICategoryGetResponse> => {
         try {
             const response = await getCategoryApi();

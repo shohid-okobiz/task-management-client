@@ -8,8 +8,7 @@ import Link from "next/link";
 import { FaTasks, FaSpinner } from "react-icons/fa";
 import { HiOutlineChevronDown } from "react-icons/hi";
 import imageSrc from "../../assets/Rectangle-bg.png";
-import IllustrationPanel from "../ui/IllustrationPanel";
-import signupbgImg from "../../assets/signuplogo.png";
+
 
 
 
@@ -80,7 +79,7 @@ const Navbar = ({ userName: userNameProp }: NavbarProps) => {
             />
             <nav className="relative text-white py-3 px-6">
                 <div className="flex justify-between items-center pb-12">
-                   
+
                     <div className="flex items-center space-x-3 z-10">
                         <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
                             <span className="text-lg">⏱️</span>
@@ -88,7 +87,7 @@ const Navbar = ({ userName: userNameProp }: NavbarProps) => {
                         <span className="font-semibold text-lg">Tasko</span>
                     </div>
 
-                  
+
                     <div className="hidden md:flex items-center gap-6 z-10">
                         <Link
                             href="/user-dashboard"
@@ -104,7 +103,7 @@ const Navbar = ({ userName: userNameProp }: NavbarProps) => {
                         </Link>
                     </div>
 
-                    
+
                     <div className="relative z-10">
                         <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center gap-2">
                             <img
@@ -140,7 +139,7 @@ const Navbar = ({ userName: userNameProp }: NavbarProps) => {
                     </div>
                 </div>
 
-              
+
                 <div className="flex justify-between items-center">
                     <div>
                         <p className="text-lg text-green-400 mb-2">Thomash</p>
