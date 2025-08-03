@@ -98,8 +98,8 @@ const CreateTaskPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-8">
-      <div className="bg-white rounded shadow p-8 w-full max-w-lg">
+    <div className="min-h-screen bg-white max-w-6xl  mx-autoitems-center justify-center">
+      <div className="rounded shadow p-8 w-full ">
         <h1 className="text-2xl font-bold mb-6">Create Task</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

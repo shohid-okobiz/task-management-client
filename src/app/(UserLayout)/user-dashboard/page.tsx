@@ -4,7 +4,7 @@ import NavIllustrationBg from "@/components/ui/NavIllustrationBg";
 
 const UserDashboard = () => {
     return (
-        <div className="w-full">
+        <div className="w-full relative">
 
             <TaskListPage />
         </div>

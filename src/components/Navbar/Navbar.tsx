@@ -46,7 +46,7 @@ const Navbar = ({ userName: userNameProp }: NavbarProps) => {
         }
     }, []);
 
-    // Logout handler
+  
     const handleLogout = async () => {
         try {
             await AuthServices.processLogout();
@@ -142,7 +142,7 @@ const Navbar = ({ userName: userNameProp }: NavbarProps) => {
 
                 <div className="flex justify-between items-center">
                     <div>
-                        <p className="text-lg text-green-400 mb-2">Thomash</p>
+                        <p className="text-lg text-green-400 mb-2">{userName}</p>
                         <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">
                             Welcome to Dashboard
                         </h1>

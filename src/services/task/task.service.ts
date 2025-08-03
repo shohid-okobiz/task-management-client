@@ -1,12 +1,12 @@
 import TaskApis from "@/app/apis/task.apis";
-import { CreateCategoryPayload, CreateTaskPayload, GetTaskListParams, ICategoryGetResponse, ICreateTaskResPonse, IGetTaskListResponse } from "@/types/TaskTypes/taskTypes";
+import { CreateCategoryPayload, CreateTaskPayload, GetTaskListParams, ICategoryGetResponse, ICreateTaskResPonse, IGetTaskListResponse, Task } from "@/types/TaskTypes/taskTypes";
 
 
 
 
 const {
     CreateTaskApi,
-    GetTaskListApi, createCategoryApi, getCategoryApi
+    GetTaskListApi, createCategoryApi, getCategoryApi,GetTaskDetailsApi
 
 } = TaskApis;
 
@@ -38,6 +38,22 @@ export const TaskServices = {
             }
         }
     },
+    GetTaskDetailsApi: async (
+      id: string
+    ): Promise<{ status: string; message: string; data: Task }> => {
+      try {
+        const response = await GetTaskDetailsApi(id);
+        return response?.data as { status: string; message: string; data: Task };
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        } else {
+          throw new Error("Unknown error occurred in task details fetch");
+        }
+      }
+    },
+
+    
     processCreateCetegoryHandler: async (payload: CreateCategoryPayload): Promise<ICategoryGetResponse> => {
         try {
             const response = await createCategoryApi(payload);

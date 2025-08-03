@@ -1,17 +1,20 @@
 import Navbar from "@/components/Navbar/Navbar";
 
-
 export default function layout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <div className="">
-            <Navbar
-                userName="thomas"/>
-            {children}
+  return (
+    <div className="relative">
+   
+      <div className="relative z-10">
+        <Navbar />
+      </div>
 
-        </div>
-    );
+      <div className="relative z-20 -mt-10">
+        {children}
+      </div>
+    </div>
+  );
 }

@@ -1,23 +1,26 @@
- 
+
 
 
 import axiosClient from "@/lib/axios.config";
 import { CreateCategoryPayload, CreateTaskPayload, GetTaskListParams } from "@/types/TaskTypes/taskTypes";
 
 const TaskApis = {
-    CreateTaskApi: (payload: CreateTaskPayload) => {
+  CreateTaskApi: (payload: CreateTaskPayload) => {
     return axiosClient.post("/create-new-task", payload);
   },
-   GetTaskListApi: (params: GetTaskListParams) => { 
+  GetTaskListApi: (params: GetTaskListParams) => {
     return axiosClient.get("/get-all-task", { params });
   },
-createCategoryApi: (payload: CreateCategoryPayload) => {
+  GetTaskDetailsApi: (id: string) => {
+    return axiosClient.get(`/task/${id}`);
+  },
+  createCategoryApi: (payload: CreateCategoryPayload) => {
     return axiosClient.post("/category", payload);
   },
-    getCategoryApi: () => {
-    return axiosClient.get("/category"); 
+  getCategoryApi: () => {
+    return axiosClient.get("/category");
   },
-   
+
 };
 
 export default TaskApis;
