@@ -1,12 +1,11 @@
 "use client";
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-// import { TaskServices } from "@/services/task/task.service";
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { TaskServices } from "@/services/task/task.service";
+import { TaskStatus } from "@/types/TaskTypes/taskTypes";
 
-// Types
 interface TaskDetailsData {
   _id: string;
   title: string;
@@ -29,7 +28,6 @@ interface TaskDetailsResponse {
   data: TaskDetailsData;
 }
 
-// Helper functions
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
@@ -109,7 +107,6 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-// Components
 const LoadingSpinner: React.FC = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center">
     <div className="text-center">
@@ -142,13 +139,67 @@ const ErrorState: React.FC<{ message: string }> = ({ message }) => (
 const TaskDetailsPage: React.FC = () => {
   const params = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const taskId = params?.id as string;
+
+  // Status options excluding "all" for task updates
+  const statusOptions: { value: string; label: string }[] = [
+    { value: "pending", label: "Pending" },
+    { value: "collaborative", label: "Collaborative" },
+    { value: "ongoing", label: "Ongoing" },
+    { value: "done", label: "Done" },
+  ];
 
   const { data, isLoading, error } = useQuery<TaskDetailsResponse>({
     queryKey: ["task", taskId],
     queryFn: () => TaskServices.GetTaskDetailsApi(taskId),
     enabled: !!taskId,
   });
+
+  // Mutation for updating task status
+  const updateStatusMutation = useMutation({
+    mutationFn: (newStatus: string) =>
+      TaskServices.processUpdateStatusTask(taskId, newStatus),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["task", taskId] });
+    },
+    onError: (error) => {
+      console.error("Failed to update task status:", error);
+    }
+  });
+
+
+  const deleteTaskMutation = useMutation({
+    mutationFn: () => TaskServices.processDeleteTask(taskId),
+    onSuccess: () => {
+      router.push("/user-dashboard/");
+    },
+    onError: (error) => {
+      console.error("Failed to delete task:", error);
+    }
+  });
+
+
+  const handleStatusChange = (newStatus: string) => {
+    updateStatusMutation.mutate(newStatus);
+  };
+
+  // Handler for task deletion
+  const handleDeleteTask = () => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      deleteTaskMutation.mutate();
+    }
+  };
+
+  // Handler for marking task as complete
+  const handleMarkComplete = () => {
+    handleStatusChange("done");
+  };
+
+  // Handler for editing task
+  const handleEditTask = () => {
+    router.push(`/user-dashboard/tasks/edit/${taskId}`);
+  };
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -162,9 +213,9 @@ const TaskDetailsPage: React.FC = () => {
   const statusStyle = getStatusStyle(task.task_status);
 
   return (
-    <div className="min-h-screen bg-white max-w-6xl  mx-auto items-center justify-center">
+    <div className="min-h-screen bg-white max-w-6xl mx-auto items-center justify-center">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header with Navigation */}
+        {/* Header Section */}
         <div className="mb-8">
           <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
             <Link href="/user-dashboard" className="hover:text-green-600 transition-colors">
@@ -195,27 +246,33 @@ const TaskDetailsPage: React.FC = () => {
               <h1 className="text-3xl font-bold text-gray-900">Task Details</h1>
             </div>
             <div className="flex space-x-3">
-              <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center">
+              <button
+                onClick={handleEditTask}
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center"
+              >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
                 Edit Task
               </button>
-              <button className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center">
+              <button
+                onClick={handleDeleteTask}
+                disabled={deleteTaskMutation.isPending}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg transition-colors flex items-center"
+              >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-                Delete
+                {deleteTaskMutation.isPending ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Task Information */}
+          {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Title and Status */}
+            {/* Task Title and Status */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center">
@@ -235,7 +292,7 @@ const TaskDetailsPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Description */}
+            {/* Description Section */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center mb-4">
                 <div className="bg-blue-100 p-2 rounded-full mr-3">
@@ -248,7 +305,7 @@ const TaskDetailsPage: React.FC = () => {
               <p className="text-gray-700 leading-relaxed">{task.description}</p>
             </div>
 
-            {/* Timeline */}
+            {/* Timeline and Status Update */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center mb-6">
                 <div className="bg-purple-100 p-2 rounded-full mr-3">
@@ -256,9 +313,9 @@ const TaskDetailsPage: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900">Timeline</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Timeline & Status</h3>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center p-4 bg-gray-50 rounded-lg">
                   <div className="bg-green-100 p-2 rounded-full mr-4">
@@ -271,7 +328,29 @@ const TaskDetailsPage: React.FC = () => {
                     <p className="text-sm text-gray-500">{formatDateTime(task.createdAt)}</p>
                   </div>
                 </div>
-                
+
+                {/* Status Update Section */}
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Update Status
+                  </label>
+                  <select
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    value={task.task_status}
+                    onChange={(e) => handleStatusChange(e.target.value)}
+                    disabled={updateStatusMutation.isPending}
+                  >
+                    {statusOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  {updateStatusMutation.isPending && (
+                    <p className="text-sm text-gray-500 mt-1">Updating status...</p>
+                  )}
+                </div>
+
                 {task.updatedAt !== task.createdAt && (
                   <div className="flex items-center p-4 bg-gray-50 rounded-lg">
                     <div className="bg-blue-100 p-2 rounded-full mr-4">
@@ -294,7 +373,7 @@ const TaskDetailsPage: React.FC = () => {
             {/* Task Details */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Task Information</h3>
-              
+
               <div className="space-y-4">
                 {/* Due Date */}
                 <div className="flex items-center justify-between py-3 border-b border-gray-100">
@@ -338,22 +417,26 @@ const TaskDetailsPage: React.FC = () => {
             {/* Quick Actions */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              
+
               <div className="space-y-3">
-                <button className="w-full flex items-center justify-center px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                <button
+                  onClick={handleMarkComplete}
+                  disabled={task.task_status === 'done' || updateStatusMutation.isPending}
+                  className="w-full flex items-center justify-center px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 disabled:bg-gray-100 disabled:text-gray-400 transition-colors"
+                >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Mark as Complete
+                  {task.task_status === 'done' ? 'Already Complete' : 'Mark as Complete'}
                 </button>
-                
+
                 <button className="w-full flex items-center justify-center px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                   </svg>
                   Share Task
                 </button>
-                
+
                 <button className="w-full flex items-center justify-center px-4 py-3 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 transition-colors">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />

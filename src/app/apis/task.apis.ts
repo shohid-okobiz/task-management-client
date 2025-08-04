@@ -20,6 +20,12 @@ const TaskApis = {
   getCategoryApi: () => {
     return axiosClient.get("/category");
   },
+  TaskStatusUpdateApi: (id: string, status: string) => {
+    return axiosClient.patch(`/my-task/${id}/status`, { task_status: status });
+  },
+  DeleteTaskApi: (id: string) => {
+    return axiosClient.patch(`/task/${id}`);
+  }
 
 };
 

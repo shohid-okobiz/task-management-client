@@ -1,7 +1,7 @@
 export interface CreateTaskPayload {
   title: string;
   description: string;
-  date: string; 
+  date: string;
   category: string;
 }
 export interface ICreateTaskResPonse {
@@ -83,4 +83,8 @@ export interface CategoryGetData {
   updatedAt: string
   __v: number
   user?: string
+}
+export interface IGetTaskDetailsResponse {
+  status: string;
+  message: string;
 }

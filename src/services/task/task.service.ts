@@ -1,12 +1,12 @@
 import TaskApis from "@/app/apis/task.apis";
-import { CreateCategoryPayload, CreateTaskPayload, GetTaskListParams, ICategoryGetResponse, ICreateTaskResPonse, IGetTaskListResponse, Task } from "@/types/TaskTypes/taskTypes";
+import { CreateCategoryPayload, CreateTaskPayload, GetTaskListParams, ICategoryGetResponse, ICreateTaskResPonse, IGetTaskDetailsResponse, IGetTaskListResponse, Task } from "@/types/TaskTypes/taskTypes";
 
 
 
 
 const {
     CreateTaskApi,
-    GetTaskListApi, createCategoryApi, getCategoryApi,GetTaskDetailsApi
+    GetTaskListApi, createCategoryApi, getCategoryApi, GetTaskDetailsApi, TaskStatusUpdateApi, DeleteTaskApi
 
 } = TaskApis;
 
@@ -21,6 +21,36 @@ export const TaskServices = {
                 throw error;
             } else {
                 throw new Error("Unknown error occurred in create task");
+            }
+        }
+    },
+    processUpdateStatusTask: async (
+        id: string,
+        status: string
+    ): Promise<ICreateTaskResPonse> => {
+        try {
+            const response = await TaskStatusUpdateApi(id, status);
+            return response?.data as ICreateTaskResPonse;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw error;
+            } else {
+                throw new Error("Unknown error occurred in update task status");
+            }
+        }
+    },
+    processDeleteTask: async (
+        id: string,
+
+    ): Promise<IGetTaskDetailsResponse> => {
+        try {
+            const response = await DeleteTaskApi(id);
+            return response?.data as IGetTaskDetailsResponse;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw error;
+            } else {
+                throw new Error("Unknown error occurred in update task status");
             }
         }
     },
@@ -39,21 +69,21 @@ export const TaskServices = {
         }
     },
     GetTaskDetailsApi: async (
-      id: string
+        id: string
     ): Promise<{ status: string; message: string; data: Task }> => {
-      try {
-        const response = await GetTaskDetailsApi(id);
-        return response?.data as { status: string; message: string; data: Task };
-      } catch (error) {
-        if (error instanceof Error) {
-          throw error;
-        } else {
-          throw new Error("Unknown error occurred in task details fetch");
+        try {
+            const response = await GetTaskDetailsApi(id);
+            return response?.data as { status: string; message: string; data: Task };
+        } catch (error) {
+            if (error instanceof Error) {
+                throw error;
+            } else {
+                throw new Error("Unknown error occurred in task details fetch");
+            }
         }
-      }
     },
 
-    
+
     processCreateCetegoryHandler: async (payload: CreateCategoryPayload): Promise<ICategoryGetResponse> => {
         try {
             const response = await createCategoryApi(payload);
