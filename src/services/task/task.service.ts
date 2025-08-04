@@ -1,5 +1,7 @@
 import TaskApis from "@/app/apis/task.apis";
+import axios from "axios";
 import { CreateCategoryPayload, CreateTaskPayload, GetTaskListParams, ICategoryGetResponse, ICreateTaskResPonse, IGetTaskDetailsResponse, IGetTaskListResponse, Task } from "@/types/TaskTypes/taskTypes";
+import { apiBaseUrl } from "@/config/config";
 
 
 
@@ -39,20 +41,14 @@ export const TaskServices = {
             }
         }
     },
-    processDeleteTask: async (
-        id: string,
 
-    ): Promise<IGetTaskDetailsResponse> => {
-        try {
-            const response = await DeleteTaskApi(id);
-            return response?.data as IGetTaskDetailsResponse;
-        } catch (error) {
-            if (error instanceof Error) {
-                throw error;
-            } else {
-                throw new Error("Unknown error occurred in update task status");
-            }
-        }
+
+    processDeleteTask: async (taskId: string, token: string) => {
+        return axios.delete(`${apiBaseUrl}/task/${taskId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     },
     processGetTaskHandler: async (
         params: GetTaskListParams

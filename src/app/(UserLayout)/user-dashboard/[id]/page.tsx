@@ -4,7 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { TaskServices } from "@/services/task/task.service";
-import { TaskStatus } from "@/types/TaskTypes/taskTypes";
+import Cookies from "js-cookie";
+import { message } from "antd";
 
 interface TaskDetailsData {
   _id: string;
@@ -142,7 +143,6 @@ const TaskDetailsPage: React.FC = () => {
   const queryClient = useQueryClient();
   const taskId = params?.id as string;
 
-  // Status options excluding "all" for task updates
   const statusOptions: { value: string; label: string }[] = [
     { value: "pending", label: "Pending" },
     { value: "collaborative", label: "Collaborative" },
@@ -156,11 +156,12 @@ const TaskDetailsPage: React.FC = () => {
     enabled: !!taskId,
   });
 
-  // Mutation for updating task status
+  
   const updateStatusMutation = useMutation({
     mutationFn: (newStatus: string) =>
       TaskServices.processUpdateStatusTask(taskId, newStatus),
     onSuccess: () => {
+      
       queryClient.invalidateQueries({ queryKey: ["task", taskId] });
     },
     onError: (error) => {
@@ -169,34 +170,41 @@ const TaskDetailsPage: React.FC = () => {
   });
 
 
-  const deleteTaskMutation = useMutation({
-    mutationFn: () => TaskServices.processDeleteTask(taskId),
-    onSuccess: () => {
-      router.push("/user-dashboard/");
-    },
-    onError: (error) => {
-      console.error("Failed to delete task:", error);
-    }
-  });
+ const deleteTaskMutation = useMutation({
+  mutationFn: async () => {
+    const token = Cookies.get("accessToken"); 
+    if (!token) throw new Error("Missing access token");
+    return TaskServices.processDeleteTask(taskId, token); 
+  },
+  onSuccess: () => {
+    message.success("Task Deleted successfully!");
+    queryClient.invalidateQueries({ queryKey: ["task", taskId] });
+    router.push("/user-dashboard/");
+  },
+  onError: (error) => {
+    console.error("Failed to delete task:", error);
+  }
+});
+
 
 
   const handleStatusChange = (newStatus: string) => {
     updateStatusMutation.mutate(newStatus);
   };
 
-  // Handler for task deletion
+  
   const handleDeleteTask = () => {
     if (window.confirm("Are you sure you want to delete this task?")) {
       deleteTaskMutation.mutate();
     }
   };
 
-  // Handler for marking task as complete
+  
   const handleMarkComplete = () => {
     handleStatusChange("done");
   };
 
-  // Handler for editing task
+  
   const handleEditTask = () => {
     router.push(`/user-dashboard/tasks/edit/${taskId}`);
   };
@@ -215,7 +223,7 @@ const TaskDetailsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white max-w-6xl mx-auto items-center justify-center">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section */}
+         
         <div className="mb-8">
           <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
             <Link href="/user-dashboard" className="hover:text-green-600 transition-colors">
@@ -270,9 +278,9 @@ const TaskDetailsPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
+          
           <div className="lg:col-span-2 space-y-6">
-            {/* Task Title and Status */}
+             
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center">
@@ -291,8 +299,7 @@ const TaskDetailsPage: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Description Section */}
+ 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center mb-4">
                 <div className="bg-blue-100 p-2 rounded-full mr-3">
@@ -305,7 +312,7 @@ const TaskDetailsPage: React.FC = () => {
               <p className="text-gray-700 leading-relaxed">{task.description}</p>
             </div>
 
-            {/* Timeline and Status Update */}
+             
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center mb-6">
                 <div className="bg-purple-100 p-2 rounded-full mr-3">
@@ -329,7 +336,7 @@ const TaskDetailsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Status Update Section */}
+             
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Update Status
@@ -368,14 +375,14 @@ const TaskDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Sidebar */}
+        
           <div className="space-y-6">
-            {/* Task Details */}
+            
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Task Information</h3>
 
               <div className="space-y-4">
-                {/* Due Date */}
+             
                 <div className="flex items-center justify-between py-3 border-b border-gray-100">
                   <div className="flex items-center">
                     <svg className="w-5 h-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -386,7 +393,6 @@ const TaskDetailsPage: React.FC = () => {
                   <span className="text-sm font-medium text-gray-900">{formatDate(task.date)}</span>
                 </div>
 
-                {/* Category */}
                 <div className="flex items-center justify-between py-3 border-b border-gray-100">
                   <div className="flex items-center">
                     <svg className="w-5 h-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -414,7 +420,7 @@ const TaskDetailsPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Quick Actions */}
+           
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
 

@@ -36,11 +36,15 @@ const CreateTaskPage: React.FC = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [showCategoryInput, setShowCategoryInput] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+  const [categoryLoading, setCategoryLoading] = useState(false);
+  const [categoryErrorMsg, setCategoryErrorMsg] = useState<string | null>(null);
 
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // Fetch categories with React Query
+ 
   const {
     data: categoryData,
     isLoading: isCategoryLoading,
@@ -53,26 +57,25 @@ const CreateTaskPage: React.FC = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Create task mutation
+  
   const createTaskMutation = useMutation({
     mutationFn: (data: CreateTaskPayload) => TaskServices.processCreateTaskHandler(data),
     onSuccess: () => {
-      // Invalidate related queries
+  
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["user-tasks"] });
 
-      // Show success message (you can implement toast notification here)
       console.log("Task created successfully!");
 
-      // Navigate to dashboard
-      router.push("/user-dashboard/tasks");
+      
+      router.push("/user-dashboard/");
     },
     onError: (err: any) => {
       setErrors({ submit: err?.message || "Failed to create task. Please try again." });
     },
   });
 
-  // Form validation
+ 
   const validateField = (name: string, value: string): string | undefined => {
     switch (name) {
       case "title":
@@ -111,7 +114,7 @@ const CreateTaskPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle input changes
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -119,13 +122,13 @@ const CreateTaskPage: React.FC = () => {
 
     setForm((prev) => ({ ...prev, [name]: value }));
 
-    // Clear error when user starts typing
+    
     if (errors[name as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
-  // Handle field blur for validation
+ 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
@@ -134,12 +137,12 @@ const CreateTaskPage: React.FC = () => {
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
-  // Handle form submission
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({ submit: undefined });
 
-    // Mark all fields as touched
+ 
     const allTouched = Object.keys(form).reduce((acc, key) => ({ ...acc, [key]: true }), {});
     setTouched(allTouched);
 
@@ -147,7 +150,7 @@ const CreateTaskPage: React.FC = () => {
       return;
     }
 
-    // Transform form data for API
+    
     const taskData: CreateTaskPayload = {
       title: form.title.trim(),
       description: form.description.trim(),
@@ -160,7 +163,7 @@ const CreateTaskPage: React.FC = () => {
 
   const categories = categoryData?.data || [];
 
-  // Get today's date in YYYY-MM-DD format for min date
+ 
   const today = new Date().toISOString().split('T')[0];
 
   return (
@@ -248,7 +251,7 @@ const CreateTaskPage: React.FC = () => {
                   <p className="mt-1 text-xs text-gray-500">{form.title.length}/100 characters</p>
                 </div>
 
-                {/* Task Description */}
+             
                 <div>
                   <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
                     Description <span className="text-red-500">*</span>
@@ -306,7 +309,7 @@ const CreateTaskPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Category Selection */}
+              
                 <div>
                   <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
                     Category <span className="text-red-500">*</span>
@@ -317,7 +320,7 @@ const CreateTaskPage: React.FC = () => {
                     value={form.category}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    disabled={isCategoryLoading}
+                    disabled={isCategoryLoading || categoryLoading}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed ${errors.category && touched.category
                         ? 'border-red-300 bg-red-50'
                         : 'border-gray-300 hover:border-gray-400'
@@ -332,6 +335,62 @@ const CreateTaskPage: React.FC = () => {
                       </option>
                     ))}
                   </select>
+                  {/* Inline create category if no categories or user wants to add */}
+                  {(!categories.length || showCategoryInput) && (
+                    <div className="mt-3 flex gap-2 items-center">
+                      <input
+                        type="text"
+                        placeholder="New category name"
+                        value={newCategory}
+                        onChange={e => setNewCategory(e.target.value)}
+                        className="flex-1 px-3 py-2 border rounded focus:ring-2 focus:ring-green-500"
+                        disabled={categoryLoading}
+                        maxLength={30}
+                      />
+                      <button
+                        type="button"
+                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded disabled:bg-green-300"
+                        disabled={categoryLoading || !newCategory.trim()}
+                        onClick={async () => {
+                          setCategoryLoading(true);
+                          setCategoryErrorMsg(null);
+                          try {
+                            const res:any= await TaskServices.processCreateCetegoryHandler({ name: newCategory.trim() });
+                            await queryClient.invalidateQueries({ queryKey: ["categories"] });
+                            setShowCategoryInput(false);
+                            setNewCategory("");
+                           
+                            setTimeout(() => {
+                              if (res?.data?.[0]?._id) {
+                                setForm(f => ({ ...f, category: res.data[0]._id }));
+                              } else if (res?.data?._id) {
+                                setForm(f => ({ ...f, category: res.data._id }));
+                              }
+                            }, 500);
+                          } catch (err: any) {
+                            setCategoryErrorMsg(err?.message || "Failed to create category");
+                          } finally {
+                            setCategoryLoading(false);
+                          }
+                        }}
+                      >
+                        {categoryLoading ? "Creating..." : "Add"}
+                      </button>
+                    </div>
+                  )}
+                  {/* Show add new category link if categories exist */}
+                  {categories.length > 0 && !showCategoryInput && (
+                    <button
+                      type="button"
+                      className="mt-2 text-green-600 text-sm hover:underline"
+                      onClick={() => setShowCategoryInput(true)}
+                    >
+                      + Create new category
+                    </button>
+                  )}
+                  {categoryErrorMsg && (
+                    <p className="mt-1 text-sm text-red-600">{categoryErrorMsg}</p>
+                  )}
                   {errors.category && touched.category && (
                     <p className="mt-1 text-sm text-red-600 flex items-center">
                       <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
