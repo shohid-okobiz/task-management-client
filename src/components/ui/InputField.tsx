@@ -45,16 +45,16 @@ const InputField: React.FC<InputFieldProps> = ({
                     onChange={onChange}
                     disabled={disabled}
                     className={`
-                        w-full px-4 py-3 border rounded-lg 
-                        focus:ring-2 focus:border-transparent 
-                        transition-all duration-200
-                        disabled:bg-gray-100 disabled:cursor-not-allowed
-                        ${error
-                            ? 'border-red-300 focus:ring-red-400'
-                            : 'border-gray-300 focus:ring-green-400'
+    w-full px-4 py-3 border rounded-lg 
+    transition-all duration-200
+    disabled:bg-gray-100 disabled:cursor-not-allowed
+    focus:outline-none
+    ${error
+                            ? 'border-red-300 focus:border-red-400'
+                            : 'border-gray-300 focus:border-green-400'
                         }
-                        ${Icon || showPasswordToggle ? 'pr-12' : ''}
-                    `}
+    ${Icon || showPasswordToggle ? 'pr-12' : ''}
+  `}
                     placeholder={placeholder}
                     aria-describedby={error ? `${id}-error` : undefined}
                     aria-invalid={error ? 'true' : 'false'}

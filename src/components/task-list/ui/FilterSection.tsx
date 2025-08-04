@@ -26,7 +26,7 @@ const FilterSection: React.FC<{
             Category
           </label>
           <select
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full border border-gray-300  rounded-md px-3 py-2 focus:outline-none  focus:ring-green-500  "
             value={category}
             onChange={(e) => onCategoryChange(e.target.value)}
           >
@@ -43,7 +43,7 @@ const FilterSection: React.FC<{
             Status
           </label>
           <select
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none   "
             value={status}
             onChange={(e) => onStatusChange(e.target.value as TaskStatus)}
           >

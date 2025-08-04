@@ -10,7 +10,7 @@ const ResetPasswordPage: React.FC = () => {
   const email = searchParams.get("email") || "";
   const router = useRouter();
 
-  // If no email in query, redirect to forgot-password
+ 
   React.useEffect(() => {
     if (!email) {
       router.replace("/forgot-password");
@@ -20,8 +20,8 @@ const ResetPasswordPage: React.FC = () => {
   if (!email) return null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center">
+      <Card className="w-full max-w-lg">
         <ResetPasswordForm email={email} />
       </Card>
     </div>

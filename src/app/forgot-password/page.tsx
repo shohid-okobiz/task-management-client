@@ -9,8 +9,8 @@ const ForgotPasswordPage: React.FC = () => {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 w-full px-4">
+      <Card className="w-full max-w-lg">
         <ForgotPasswordForm
           onSuccess={(submittedEmail) => {
             router.push(`/forgot-password/reset?email=${encodeURIComponent(submittedEmail)}`);
