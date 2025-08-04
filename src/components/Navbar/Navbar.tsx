@@ -97,7 +97,7 @@ const Navbar = ({ userName: userNameProp }: NavbarProps) => {
                             <span className="font-medium">Task List</span>
                         </Link>
 
-                        <Link href="/spin" className="flex items-center gap-1 hover:text-green-300">
+                        <Link href="/user-dashboard/spin" className="flex items-center gap-1 hover:text-green-300">
                             <FaSpinner className="text-base animate-spin-slow" />
                             <span className="font-medium">Spin</span>
                         </Link>
@@ -129,9 +129,7 @@ const Navbar = ({ userName: userNameProp }: NavbarProps) => {
                                         <Link href="/login" className="block px-4 py-2 hover:bg-gray-100">
                                             Login
                                         </Link>
-                                        <Link href="/" className="block px-4 py-2 hover:bg-gray-100">
-                                            Sign Up
-                                        </Link>
+                                        
                                     </>
                                 )}
                             </div>
