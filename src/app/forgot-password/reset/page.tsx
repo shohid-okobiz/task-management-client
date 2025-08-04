@@ -1,31 +1,10 @@
-"use client";
+import React, { Suspense } from "react";
+import ResetPasswordClient from "./ResetPasswordClient";
 
-import React from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Card } from "antd";
-import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
-
-const ResetPasswordPage: React.FC = () => {
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email") || "";
-  const router = useRouter();
-
- 
-  React.useEffect(() => {
-    if (!email) {
-      router.replace("/forgot-password");
-    }
-  }, [email, router]);
-
-  if (!email) return null;
-
+export default function Page() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <Card className="w-full max-w-lg">
-        <ResetPasswordForm email={email} />
-      </Card>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordClient />
+    </Suspense>
   );
-};
-
-export default ResetPasswordPage;
+}
